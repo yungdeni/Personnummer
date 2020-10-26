@@ -15,6 +15,22 @@ namespace Personnummer
 
             Console.WriteLine("Skriv in ditt personnummer");
             string userInput = Console.ReadLine();
+            //userInput = userInput.Insert(0,"19");
+            //if (userInput.Length == 10)
+            //{
+            //    if (userInput.Substring(9,1) == "-" && userInput.)
+            //    {
+            //        userInput = userInput.Insert(0, "19");
+            //    }
+            //    else if (userInput.Substring(9, 1) == "+")
+            //    {
+
+            //    }
+            //}
+
+
+            LuhnCheck("8112189870");
+
             if (userInput.Length != 12)
             {
                 Console.WriteLine("Felaktigt personnummer, fel antal");
@@ -23,7 +39,6 @@ namespace Personnummer
             {
                 Console.WriteLine("Felaktigt personnummer, ange siffor");
             }
-            
             else  
             {
                 //We already checked if the input is an integer so we can safely assign our values
@@ -33,7 +48,12 @@ namespace Personnummer
                 int day = int.Parse(userInput.Substring(6, 2));
                 int birthnumber = int.Parse(userInput.Substring(8, 3));
                 int cNumber = int.Parse(userInput.Substring(11, 1));
-
+                
+                if (LeapYear(year))
+                {
+                    //if its a leap year february is 29 days long
+                    monthLength[1] = 29;
+                }
                 
                 if (year >= 1753 && year <= 2020 == false)
                 {
@@ -48,6 +68,12 @@ namespace Personnummer
                 {
                     Console.WriteLine("Felaktigt personnummer, fel antal dagar i manad");
                 }
+
+                else
+                {
+                    Console.WriteLine("Personnummer {0} är korrekt och tillhör en {1}", userInput, CheckGender(birthnumber));
+                }
+
 
 
             }
@@ -73,6 +99,36 @@ namespace Personnummer
                 return true;
             }
             //else
+            return false;
+        }
+
+        static string CheckGender(int birth)
+        {
+            if (birth % 2 == 0)
+            {
+                return "kvinna";
+            }
+
+            return "man";
+        }
+
+        static bool LuhnCheck(string formatedUserInput)
+        {
+            int sum;
+            string split = "";
+            // (var % 2) +1
+            for (int i = 1; i < formatedUserInput.Length; i++)
+            {
+                //% 2 + 1 to alternate between multiplying by 1 and 2
+                sum = (int.Parse(formatedUserInput.Substring(i-1, 1)) * ((i % 2) + 1));
+                split += (sum.ToString());
+
+            }
+            sum = 0;
+            for (int i = 0; i < split.Length; i++)
+            {
+                sum += int.Parse(split.Substring(i, 1));
+            }
             return false;
         }
     }
