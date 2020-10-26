@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/// <summary>
+/// PERSONNUMMER FROM 1800S???
+/// </summary>
 namespace Personnummer
 {
     class Program
@@ -15,21 +18,37 @@ namespace Personnummer
 
             Console.WriteLine("Skriv in ditt personnummer");
             string userInput = Console.ReadLine();
-            //userInput = userInput.Insert(0,"19");
-            //if (userInput.Length == 10)
-            //{
-            //    if (userInput.Substring(9,1) == "-" && userInput.)
-            //    {
-            //        userInput = userInput.Insert(0, "19");
-            //    }
-            //    else if (userInput.Substring(9, 1) == "+")
-            //    {
+            //userInput = userInput.Insert(0, "19");
+            if (userInput.Length == 11)
+            {
+                if (int.TryParse(userInput.Substring(0, 2), out int yearCheck))
+                {
+                    //We only check personnummer for people born this year
+                    if (userInput.Substring(6, 1) == "-" && yearCheck >= 20)
+                    {
+                        userInput = userInput.Insert(0, "19");
+                    }
+                    else if (userInput.Substring(6, 1) == "+")
+                    {
+                        userInput = userInput.Insert(0, "19");
+                    }
+                    else
+                    {
+                        userInput = userInput.Insert(0, "20");
+                    }
 
-            //    }
-            //}
+                }
+
+                userInput = userInput.Remove(8,1);
+                
 
 
-            LuhnCheck("8112189870");
+
+
+            }
+
+
+            
 
             if (userInput.Length != 12)
             {
@@ -67,6 +86,10 @@ namespace Personnummer
                 else if (day == 0 || (day > monthLength[month-1]))
                 {
                     Console.WriteLine("Felaktigt personnummer, fel antal dagar i manad");
+                }
+                else if (!LuhnCheck(userInput.Substring(2), cNumber))
+                {
+                    Console.WriteLine("Felaktigt personnummer, fel kontrollsiffra");
                 }
 
                 else
@@ -112,11 +135,11 @@ namespace Personnummer
             return "man";
         }
 
-        static bool LuhnCheck(string formatedUserInput)
+        static bool LuhnCheck(string formatedUserInput, int cNumber)
         {
             int sum;
             string split = "";
-            // (var % 2) +1
+            
             for (int i = 1; i < formatedUserInput.Length; i++)
             {
                 //% 2 + 1 to alternate between multiplying by 1 and 2
@@ -128,6 +151,13 @@ namespace Personnummer
             for (int i = 0; i < split.Length; i++)
             {
                 sum += int.Parse(split.Substring(i, 1));
+            }
+
+            
+
+            if (10 - (sum % 10) % 10 == cNumber)
+            {
+                return true;
             }
             return false;
         }
